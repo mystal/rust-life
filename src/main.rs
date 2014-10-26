@@ -66,6 +66,9 @@ fn run(step_time_ms: uint, width: uint, height: uint) {
     let mut simulate = false;
     let mut last_step_time = timer::get_ticks();
 
+    let cell_width = SCREEN_WIDTH/board.grid.width;
+    let cell_height = SCREEN_HEIGHT/board.grid.height;
+
     while running {
         let start_time = timer::get_ticks();
 
@@ -80,7 +83,13 @@ fn run(step_time_ms: uint, width: uint, height: uint) {
                         keycode::SKey => board.step(),
                         _ => continue,
                     }
-                }
+                },
+                event::MouseButtonDownEvent(_, _, _, sdl2::mouse::LeftMouse, x, y) => {
+                    board.grid.set(x as uint/cell_width, y as uint/cell_height, true);
+                },
+                event::MouseButtonDownEvent(_, _, _, sdl2::mouse::RightMouse, x, y) => {
+                    board.grid.set(x as uint/cell_width, y as uint/cell_height, false);
+                },
                 event::QuitEvent(..) => running = false,
                 event::NoEvent => break,
                 _ => continue,
