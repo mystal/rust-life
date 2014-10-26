@@ -18,13 +18,13 @@ use sdl2::video::{
 
 mod grid;
 
-static SCREEN_WIDTH: uint = 500;
-static SCREEN_HEIGHT: uint = 500;
+const SCREEN_WIDTH: uint = 500;
+const SCREEN_HEIGHT: uint = 500;
 
-static FPS: uint = 60;
+const FPS: uint = 60;
 
-static BLACK: pixels::Color = pixels::RGB(0, 0, 0);
-static WHITE: pixels::Color = pixels::RGB(255, 255, 255);
+const BLACK: pixels::Color = pixels::RGB(0, 0, 0);
+const WHITE: pixels::Color = pixels::RGB(255, 255, 255);
 
 fn draw_board(renderer: &Renderer<Window>, board: &grid::LifeBoard) {
     let mut cell_rect = sdl2::rect::Rect {
