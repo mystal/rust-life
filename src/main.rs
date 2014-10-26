@@ -4,7 +4,7 @@ use sdl2::event;
 use sdl2::keycode;
 use sdl2::pixels;
 use sdl2::render::{
-    Accelerated,
+    ACCELERATED,
     //BlendBlend,
     DriverAuto,
     Renderer,
@@ -12,7 +12,7 @@ use sdl2::render::{
 use sdl2::timer;
 use sdl2::video::{
     PosUndefined,
-    Shown,
+    SHOWN,
     Window,
 };
 
@@ -55,9 +55,9 @@ fn run(step_time_ms: uint, width: uint, height: uint) {
                              PosUndefined,
                              SCREEN_WIDTH as int,
                              SCREEN_HEIGHT as int,
-                             Shown).unwrap();
+                             SHOWN).unwrap();
     let renderer = Renderer::from_window(
-        window, DriverAuto, Accelerated).unwrap();
+        window, DriverAuto, ACCELERATED).unwrap();
     //renderer.set_blend_mode(BlendBlend);
 
     sdl2::mouse::show_cursor(true);
@@ -125,7 +125,7 @@ fn main() {
     let width = 50;
     let height = 50;
 
-    sdl2::init(sdl2::InitVideo | sdl2::InitTimer);
+    sdl2::init(sdl2::INIT_VIDEO | sdl2::INIT_TIMER);
 
     run(step_time, width, height);
 
