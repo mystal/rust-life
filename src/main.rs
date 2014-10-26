@@ -77,6 +77,7 @@ fn run(step_time_ms: uint, width: uint, height: uint) {
                         keycode::SpaceKey => simulate = !simulate,
                         keycode::RKey => board.randomize(),
                         keycode::CKey => board.clear(),
+                        keycode::SKey => board.step(),
                         _ => continue,
                     }
                 }
