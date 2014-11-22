@@ -6,8 +6,8 @@ use sdl2::pixels;
 use sdl2::render::{
     ACCELERATED,
     //BlendBlend,
-    DriverAuto,
     Renderer,
+    RenderDriverIndex,
 };
 use sdl2::timer;
 use sdl2::video::{
@@ -26,7 +26,7 @@ const FPS: uint = 60;
 const BLACK: pixels::Color = pixels::RGB(0, 0, 0);
 const WHITE: pixels::Color = pixels::RGB(255, 255, 255);
 
-fn draw_board(renderer: &Renderer<Window>, board: &grid::LifeBoard) {
+fn draw_board(renderer: &Renderer, board: &grid::LifeBoard) {
     let mut cell_rect = sdl2::rect::Rect {
         x: 0,
         y: 0,
@@ -57,7 +57,7 @@ fn run(step_time_ms: uint, width: uint, height: uint) {
                              SCREEN_HEIGHT as int,
                              SHOWN).unwrap();
     let renderer = Renderer::from_window(
-        window, DriverAuto, ACCELERATED).unwrap();
+        window, RenderDriverIndex::Auto, ACCELERATED).unwrap();
     //renderer.set_blend_mode(BlendBlend);
 
     sdl2::mouse::show_cursor(true);
@@ -74,24 +74,24 @@ fn run(step_time_ms: uint, width: uint, height: uint) {
 
         loop {
             match event::poll_event() {
-                event::KeyDownEvent(_, _, key, _, _) => {
+                event::KeyDown(_, _, key, _, _, _) => {
                     println!("{}", key);
                     match key {
-                        keycode::SpaceKey => simulate = !simulate,
-                        keycode::RKey => board.randomize(),
-                        keycode::CKey => board.clear(),
-                        keycode::SKey => board.step(),
+                        keycode::Space => simulate = !simulate,
+                        keycode::R => board.randomize(),
+                        keycode::C => board.clear(),
+                        keycode::S => board.step(),
                         _ => continue,
                     }
                 },
-                event::MouseButtonDownEvent(_, _, _, sdl2::mouse::LeftMouse, x, y) => {
+                event::MouseButtonDown(_, _, _, sdl2::mouse::Left, x, y) => {
                     board.grid.set(x as uint/cell_width, y as uint/cell_height, true);
                 },
-                event::MouseButtonDownEvent(_, _, _, sdl2::mouse::RightMouse, x, y) => {
+                event::MouseButtonDown(_, _, _, sdl2::mouse::Right, x, y) => {
                     board.grid.set(x as uint/cell_width, y as uint/cell_height, false);
                 },
-                event::QuitEvent(..) => running = false,
-                event::NoEvent => break,
+                event::Quit(..) => running = false,
+                event::None => break,
                 _ => continue,
             }
         }

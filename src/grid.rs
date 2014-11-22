@@ -58,7 +58,7 @@ impl BoolGrid {
     }
 
     pub fn set(&mut self, x: uint, y: uint, value: bool) {
-        self.grid.get_mut(y).set(x, value);
+        self.grid[y].set(x, value);
     }
 
     pub fn clear(&mut self) {
