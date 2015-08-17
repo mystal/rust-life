@@ -1,16 +1,16 @@
-use std::collections::Bitv;
-use std::rand;
+use bit_vec::BitVec;
+use rand;
 
-#[deriving(Clone)]
+#[derive(Clone)]
 pub struct BoolGrid {
-    pub width: uint,
-    pub height: uint,
-    pub grid: Vec<Bitv>,
+    pub width: usize,
+    pub height: usize,
+    pub grid: Vec<BitVec>,
 }
 
 struct Cell {
-    x: uint,
-    y: uint,
+    x: usize,
+    y: usize,
     alive: bool,
 }
 
@@ -20,10 +20,10 @@ pub struct LifeBoard {
 }
 
 impl BoolGrid {
-    pub fn new(width: uint, height: uint) -> BoolGrid {
-        let mut grid = Vec::with_capacity(height);
-        for _ in range(0, height) {
-            grid.push(Bitv::with_capacity(width, false));
+    pub fn new(width: usize, height: usize) -> BoolGrid {
+        let mut grid = Vec::with_capacity(height as usize);
+        for _ in 0..height {
+            grid.push(BitVec::from_elem(width as usize, false));
         }
 
         BoolGrid {
@@ -33,15 +33,19 @@ impl BoolGrid {
         }
     }
 
-    pub fn check_point(&self, x: uint, y: uint) -> bool {
-        x < self.width && y < self.height
+    pub fn check_point(&self, x: i32, y: i32) -> bool {
+        x >= 0 && x < self.width as i32 && y >= 0 && y < self.height as i32
     }
 
-    pub fn get_neighbors(&self, x: uint, y: uint) -> Vec<Cell> {
+    pub fn get_neighbors(&self, x: usize, y: usize) -> Vec<Cell> {
+        let x = x as i32;
+        let y = y as i32;
         let mut neighbors = vec![];
-        for j in range(y - 1, y + 2) {
-            for i in range(x - 1, x + 2) {
+        for j in (y - 1)..(y + 2) {
+            for i in (x - 1)..(x + 2) {
                 if (x != i || y != j) && self.check_point(i, j) {
+                    let i = i as usize;
+                    let j = j as usize;
                     neighbors.push(Cell {
                         x: i,
                         y: j,
@@ -53,11 +57,11 @@ impl BoolGrid {
         neighbors
     }
 
-    pub fn get(&self, x: uint, y: uint) -> bool {
+    pub fn get(&self, x: usize, y: usize) -> bool {
         self.grid[y][x]
     }
 
-    pub fn set(&mut self, x: uint, y: uint, value: bool) {
+    pub fn set(&mut self, x: usize, y: usize, value: bool) {
         self.grid[y].set(x, value);
     }
 
@@ -69,7 +73,7 @@ impl BoolGrid {
 
     pub fn randomize(&mut self) {
         for bv in self.grid.iter_mut() {
-            for i in range(0, bv.len()) {
+            for i in 0..bv.len() {
                 bv.set(i, rand::random());
             }
         }
@@ -77,7 +81,7 @@ impl BoolGrid {
 }
 
 impl LifeBoard {
-    pub fn new(width: uint, height: uint) -> LifeBoard {
+    pub fn new(width: usize, height: usize) -> LifeBoard {
         LifeBoard {
             grid: BoolGrid::new(width, height),
             old_grid: BoolGrid::new(width, height),
@@ -95,8 +99,8 @@ impl LifeBoard {
     pub fn step(&mut self) {
         self.old_grid = self.grid.clone();
 
-        for j in range(0, self.grid.height) {
-            for i in range(0, self.grid.width) {
+        for j in 0..self.grid.height {
+            for i in 0..self.grid.width {
                 let neighbor_count = self.old_grid.get_neighbors(i, j).iter()
                     .filter(|&cell| cell.alive)
                     .count();

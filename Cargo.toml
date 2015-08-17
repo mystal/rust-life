@@ -4,5 +4,8 @@ name = "rust-life"
 version = "0.0.1"
 authors = ["Gabriel Martinez <gabe@refractedpixels.com>"]
 
-[dependencies.sdl2]
-git = "https://github.com/AngryLawyer/rust-sdl2"
+[dependencies]
+
+bit-vec = "*"
+rand = "*"
+sdl2 = "*"
