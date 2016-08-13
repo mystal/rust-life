@@ -1,6 +1,11 @@
+#![feature(test)]
+
 extern crate bit_vec;
 extern crate rand;
 extern crate sdl2;
+
+extern crate test;
+
 
 use sdl2::{
     EventPump,
@@ -17,6 +22,7 @@ use sdl2::render::{
 
 mod grid;
 
+
 const SCREEN_WIDTH: u32 = 500;
 const SCREEN_HEIGHT: u32 = 500;
 
@@ -24,6 +30,7 @@ const FPS: u32 = 60;
 
 const BLACK: Color = Color::RGB(0, 0, 0);
 const WHITE: Color = Color::RGB(255, 255, 255);
+
 
 fn draw_board(renderer: &mut Renderer, board: &grid::LifeBoard) {
     let cell_width = SCREEN_WIDTH / board.grid.width as u32;

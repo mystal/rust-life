@@ -1,6 +1,7 @@
 use bit_vec::BitVec;
 use rand;
 
+
 #[derive(Clone)]
 pub struct BoolGrid {
     pub width: usize,
@@ -18,6 +19,7 @@ pub struct LifeBoard {
     pub grid: BoolGrid,
     old_grid: BoolGrid,
 }
+
 
 impl BoolGrid {
     pub fn new(width: usize, height: usize) -> BoolGrid {
@@ -37,7 +39,7 @@ impl BoolGrid {
         x >= 0 && x < self.width as i32 && y >= 0 && y < self.height as i32
     }
 
-    pub fn get_neighbors(&self, x: usize, y: usize) -> Vec<Cell> {
+    fn get_neighbors(&self, x: usize, y: usize) -> Vec<Cell> {
         let x = x as i32;
         let y = y as i32;
         let mut neighbors = vec![];
@@ -112,5 +114,19 @@ impl LifeBoard {
                 }
             }
         }
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use test::Bencher;
+
+    #[bench]
+    fn bench_1000x1000_blank_step_once(b: &mut Bencher) {
+        let mut board = LifeBoard::new(1000, 1000);
+
+        b.iter(|| board.step());
     }
 }
