@@ -1,3 +1,4 @@
+#![feature(conservative_impl_trait)]
 #![feature(test)]
 
 extern crate bit_vec;
@@ -37,17 +38,15 @@ fn draw_board(renderer: &mut Renderer, board: &grid::LifeBoard) {
     let cell_height = SCREEN_HEIGHT / board.height() as u32;
 
     renderer.set_draw_color(WHITE);
-    for (j, bv) in board.grid.grid.iter().enumerate() {
-        for (i, alive) in bv.iter().enumerate() {
-            if alive {
-                let cell_rect = Rect::new(
-                    (i * cell_width as usize) as i32,
-                    (j * cell_height as usize) as i32,
-                    cell_width,
-                    cell_height,
-                );
-                renderer.fill_rect(cell_rect);
-            }
+    for cell in board.iter_cells() {
+        if cell.alive {
+            let cell_rect = Rect::new(
+                (cell.x * cell_width as usize) as i32,
+                (cell.y * cell_height as usize) as i32,
+                cell_width,
+                cell_height,
+            );
+            renderer.fill_rect(cell_rect);
         }
     }
 }
@@ -88,6 +87,7 @@ fn run(video: VideoSubsystem, mut timer: TimerSubsystem, mut event_pump: EventPu
                         Keycode::R => board.randomize(),
                         Keycode::C => board.clear(),
                         Keycode::S => board.step(),
+                        Keycode::Escape => running = false,
                         _ => {},
                     }
                 },

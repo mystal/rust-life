@@ -1,18 +1,21 @@
-use bit_vec::BitVec;
+use bit_vec::{self, BitVec};
 use rand;
 
+use std::iter::Enumerate;
+
+
+#[derive(Clone, Copy)]
+pub struct Cell {
+    pub x: usize,
+    pub y: usize,
+    pub alive: bool,
+}
 
 #[derive(Clone)]
 pub struct BoolGrid {
-    pub width: usize,
-    pub height: usize,
-    pub grid: Vec<BitVec>,
-}
-
-struct Cell {
-    x: usize,
-    y: usize,
-    alive: bool,
+    width: usize,
+    height: usize,
+    grid: BitVec,
 }
 
 pub struct LifeBoard {
@@ -20,13 +23,26 @@ pub struct LifeBoard {
     old_grid: BoolGrid,
 }
 
+struct CellIterator<'a> {
+    width: usize,
+    height: usize,
+    inner: Enumerate<bit_vec::Iter<'a>>,
+}
+
+
+impl Cell {
+    fn new() -> Self {
+        Cell {
+            x: 0,
+            y: 0,
+            alive: false,
+        }
+    }
+}
 
 impl BoolGrid {
-    pub fn new(width: usize, height: usize) -> BoolGrid {
-        let mut grid = Vec::with_capacity(height as usize);
-        for _ in 0..height {
-            grid.push(BitVec::from_elem(width as usize, false));
-        }
+    pub fn new(width: usize, height: usize) -> Self {
+        let grid = BitVec::from_elem(width * height, false);
 
         BoolGrid {
             width: width,
@@ -35,24 +51,26 @@ impl BoolGrid {
         }
     }
 
-    pub fn check_point(&self, x: i32, y: i32) -> bool {
-        x >= 0 && x < self.width as i32 && y >= 0 && y < self.height as i32
+    pub fn check_point(&self, x: usize, y: usize) -> bool {
+        x < self.width && y < self.height
     }
 
-    fn get_neighbors(&self, x: usize, y: usize) -> Vec<Cell> {
-        let x = x as i32;
-        let y = y as i32;
-        let mut neighbors = vec![];
-        for j in (y - 1)..(y + 2) {
-            for i in (x - 1)..(x + 2) {
+    fn get_neighbors(&self, x: usize, y: usize) -> [Cell; 8] {
+        let mut neighbors = [Cell::new(); 8];
+        let mut next_neighbor = 0;
+
+        let x_start = if x == 0 { x } else { x - 1 };
+        let y_start = if y == 0 { y } else { y - 1 };
+
+        for j in y_start..(y + 2) {
+            for i in x_start..(x + 2) {
                 if (x != i || y != j) && self.check_point(i, j) {
-                    let i = i as usize;
-                    let j = j as usize;
-                    neighbors.push(Cell {
+                    neighbors[next_neighbor] = Cell {
                         x: i,
                         y: j,
-                        alive: self.grid[j][i],
-                    });
+                        alive: self.get(i, j),
+                    };
+                    next_neighbor += 1;
                 }
             }
         }
@@ -60,24 +78,22 @@ impl BoolGrid {
     }
 
     pub fn get(&self, x: usize, y: usize) -> bool {
-        self.grid[y][x]
+        let index = (y * self.width) + x;
+        self.grid[index]
     }
 
     pub fn set(&mut self, x: usize, y: usize, value: bool) {
-        self.grid[y].set(x, value);
+        let index = (y * self.width) + x;
+        self.grid.set(index, value);
     }
 
     pub fn clear(&mut self) {
-        for bv in self.grid.iter_mut() {
-            bv.clear();
-        }
+        self.grid.clear();
     }
 
     pub fn randomize(&mut self) {
-        for bv in self.grid.iter_mut() {
-            for i in 0..bv.len() {
-                bv.set(i, rand::random());
-            }
+        for i in 0..self.grid.len() {
+            self.grid.set(i, rand::random());
         }
     }
 }
@@ -121,6 +137,30 @@ impl LifeBoard {
                     self.grid.set(i, j, neighbor_count == 3);
                 }
             }
+        }
+    }
+
+    pub fn iter_cells<'a>(&'a self) -> impl Iterator<Item=Cell> + 'a {
+        CellIterator {
+            width: self.grid.width,
+            height: self.grid.height,
+            inner: self.grid.grid.iter().enumerate(),
+        }
+    }
+}
+
+impl<'a> Iterator for CellIterator<'a> {
+    type Item = Cell;
+
+    fn next(&mut self) -> Option<Cell> {
+        if let Some((i, alive)) = self.inner.next() {
+            Some(Cell {
+                x: i % self.width,
+                y: i / self.height,
+                alive: alive,
+            })
+        } else {
+            None
         }
     }
 }
