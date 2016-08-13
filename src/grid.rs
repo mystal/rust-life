@@ -172,6 +172,20 @@ mod tests {
     use test::Bencher;
 
     #[bench]
+    fn bench_10x10_blank_step_once(b: &mut Bencher) {
+        let mut board = LifeBoard::new(10, 10);
+
+        b.iter(|| board.step());
+    }
+
+    #[bench]
+    fn bench_100x100_blank_step_once(b: &mut Bencher) {
+        let mut board = LifeBoard::new(100, 100);
+
+        b.iter(|| board.step());
+    }
+
+    #[bench]
     fn bench_1000x1000_blank_step_once(b: &mut Bencher) {
         let mut board = LifeBoard::new(1000, 1000);
 
