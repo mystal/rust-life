@@ -90,6 +90,14 @@ impl LifeBoard {
         }
     }
 
+    pub fn width(&self) -> usize {
+        self.grid.width
+    }
+
+    pub fn height(&self) -> usize {
+        self.grid.height
+    }
+
     pub fn clear(&mut self) {
         self.grid.clear();
     }
@@ -101,8 +109,8 @@ impl LifeBoard {
     pub fn step(&mut self) {
         self.old_grid = self.grid.clone();
 
-        for j in 0..self.grid.height {
-            for i in 0..self.grid.width {
+        for j in 0..self.height() {
+            for i in 0..self.width() {
                 let neighbor_count = self.old_grid.get_neighbors(i, j).iter()
                     .filter(|&cell| cell.alive)
                     .count();

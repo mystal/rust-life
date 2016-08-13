@@ -33,8 +33,8 @@ const WHITE: Color = Color::RGB(255, 255, 255);
 
 
 fn draw_board(renderer: &mut Renderer, board: &grid::LifeBoard) {
-    let cell_width = SCREEN_WIDTH / board.grid.width as u32;
-    let cell_height = SCREEN_HEIGHT / board.grid.height as u32;
+    let cell_width = SCREEN_WIDTH / board.width() as u32;
+    let cell_height = SCREEN_HEIGHT / board.height() as u32;
 
     renderer.set_draw_color(WHITE);
     for (j, bv) in board.grid.grid.iter().enumerate() {
@@ -70,8 +70,8 @@ fn run(video: VideoSubsystem, mut timer: TimerSubsystem, mut event_pump: EventPu
     let mut simulate = false;
     let mut last_step_time = timer.ticks();
 
-    let cell_width = SCREEN_WIDTH as usize / board.grid.width;
-    let cell_height = SCREEN_HEIGHT as usize / board.grid.height;
+    let cell_width = SCREEN_WIDTH as usize / board.width();
+    let cell_height = SCREEN_HEIGHT as usize / board.height();
 
     while running {
         let start_time = timer.ticks();
