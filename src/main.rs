@@ -33,7 +33,7 @@ fn draw_board(renderer: &mut Renderer, board: &grid::LifeBoard) {
     for (j, bv) in board.grid.grid.iter().enumerate() {
         for (i, alive) in bv.iter().enumerate() {
             if alive {
-                let cell_rect = Rect::new_unwrap(
+                let cell_rect = Rect::new(
                     (i * cell_width as usize) as i32,
                     (j * cell_height as usize) as i32,
                     cell_width,
