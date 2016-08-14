@@ -4,6 +4,5 @@ version = "0.0.1"
 authors = ["Gabriel Martinez <gabe@refractedpixels.com>"]
 
 [dependencies]
-bit-vec = "^0.4.3"
 rand = "^0.3.14"
 sdl2 = "^0.22.0"
