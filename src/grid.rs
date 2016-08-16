@@ -5,7 +5,6 @@ use rand;
 pub struct Cell {
     pub x: usize,
     pub y: usize,
-    pub alive: bool,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -22,7 +21,7 @@ pub struct Grid {
 }
 
 pub struct LifeBoard {
-    pub grid: Grid,
+    grid: Grid,
     old_grid: Grid,
 }
 
@@ -39,7 +38,6 @@ impl Cell {
         Cell {
             x: 0,
             y: 0,
-            alive: false,
         }
     }
 }
@@ -73,7 +71,6 @@ impl Grid {
                     neighbors[next_neighbor] = Cell {
                         x: i,
                         y: j,
-                        alive: self.get(i, j),
                     };
                     next_neighbor += 1;
                 }
@@ -197,7 +194,6 @@ impl<'a, I> Iterator for CellIterator<I>
             Some(Cell {
                 x: i % self.width,
                 y: i / self.width,
-                alive: true,
             })
         } else {
             None
@@ -294,7 +290,6 @@ mod tests {
         assert_eq!(board_iter.next(), Some(Cell {
             x: 1,
             y: 1,
-            alive: true,
         }));
     }
 
