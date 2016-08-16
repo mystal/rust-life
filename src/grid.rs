@@ -319,6 +319,42 @@ mod tests {
         b.iter(|| board.step());
     }
 
+    #[bench]
+    fn bench_100x100_glider_step_100(b: &mut Bencher) {
+        let mut board = LifeBoard::new(100, 100);
+        board.set(0, 0, true);
+        board.set(1, 0, true);
+        board.set(2, 0, true);
+        board.set(2, 1, true);
+        board.set(1, 2, true);
+
+        b.iter(|| {
+            for _ in 0..100 {
+                board.step();
+            }
+        });
+    }
+
+    #[bench]
+    fn bench_100x100_acorn_step_100(b: &mut Bencher) {
+        let mut board = LifeBoard::new(100, 100);
+        board.set(0, 0, true);
+        board.set(1, 0, true);
+        board.set(1, 2, true);
+        board.set(3, 1, true);
+        board.set(4, 0, true);
+        board.set(5, 0, true);
+        board.set(6, 0, true);
+
+        b.iter(|| {
+            for _ in 0..100 {
+                board.step();
+            }
+        });
+    }
+
+    // TODO: Glider gun benchmark?
+
     //#[bench]
     //fn bench_10000x10000_blank_step_once(b: &mut Bencher) {
     //    let mut board = LifeBoard::new(10000, 10000);
