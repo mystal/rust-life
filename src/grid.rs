@@ -268,5 +268,20 @@ mod tests {
         });
     }
 
+    #[bench]
+    fn bench_100x100_dense_step_once(b: &mut Bencher) {
+        let mut board = LifeBoard::new();
+
+        for j in 0..100 {
+            for i in 0..100 {
+                board.set(i, j, true);
+            }
+        }
+
+        b.iter(|| {
+            board.step();
+        });
+    }
+
     // TODO: Glider gun benchmark?
 }
