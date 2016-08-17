@@ -26,6 +26,9 @@ mod grid;
 const SCREEN_WIDTH: u32 = 500;
 const SCREEN_HEIGHT: u32 = 500;
 
+const GRID_WIDTH: usize = 50;
+const GRID_HEIGHT: usize = 50;
+
 const FPS: u32 = 60;
 
 const BLACK: Color = Color::RGB(0, 0, 0);
@@ -33,8 +36,8 @@ const WHITE: Color = Color::RGB(255, 255, 255);
 
 
 fn draw_board(renderer: &mut Renderer, board: &grid::LifeBoard) {
-    let cell_width = SCREEN_WIDTH / board.width() as u32;
-    let cell_height = SCREEN_HEIGHT / board.height() as u32;
+    let cell_width = SCREEN_WIDTH / GRID_WIDTH as u32;
+    let cell_height = SCREEN_HEIGHT / GRID_HEIGHT as u32;
 
     renderer.set_draw_color(WHITE);
     for cell in board.iter_live_cells() {
@@ -49,8 +52,8 @@ fn draw_board(renderer: &mut Renderer, board: &grid::LifeBoard) {
 }
 
 fn run(video: VideoSubsystem, mut timer: TimerSubsystem, mut event_pump: EventPump,
-       step_time_ms: u32, width: u32, height: u32) {
-    let mut board = grid::LifeBoard::new(width as usize, height as usize);
+       step_time_ms: u32) {
+    let mut board = grid::LifeBoard::new();
 
     let window = video.window(
         "rust-life",
@@ -66,8 +69,8 @@ fn run(video: VideoSubsystem, mut timer: TimerSubsystem, mut event_pump: EventPu
     let mut simulate = false;
     let mut last_step_time = timer.ticks();
 
-    let cell_width = SCREEN_WIDTH as usize / board.width();
-    let cell_height = SCREEN_HEIGHT as usize / board.height();
+    let cell_width = SCREEN_WIDTH as usize / GRID_WIDTH;
+    let cell_height = SCREEN_HEIGHT as usize / GRID_HEIGHT;
 
     while running {
         let start_time = timer.ticks();
@@ -81,7 +84,7 @@ fn run(video: VideoSubsystem, mut timer: TimerSubsystem, mut event_pump: EventPu
                     println!("{:?}", key);
                     match key {
                         Keycode::Space => simulate = !simulate,
-                        Keycode::R => board.randomize(),
+                        //Keycode::R => board.randomize(),
                         Keycode::C => board.clear(),
                         Keycode::S => board.step(),
                         Keycode::Escape => running = false,
@@ -129,13 +132,11 @@ fn run(video: VideoSubsystem, mut timer: TimerSubsystem, mut event_pump: EventPu
 
 fn main() {
     let step_time = 200;
-    let width = 50;
-    let height = 50;
 
     let sdl = sdl2::init().unwrap();
     let video = sdl.video().unwrap();
     let timer = sdl.timer().unwrap();
     let event_pump = sdl.event_pump().unwrap();
 
-    run(video, timer, event_pump, step_time, width, height);
+    run(video, timer, event_pump, step_time);
 }
