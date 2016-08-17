@@ -14,13 +14,6 @@ pub struct LifeBoard {
     neighbors: HashMap<Cell, u8>,
 }
 
-struct CellIterator<I>
-    where I: Iterator {
-    width: usize,
-    height: usize,
-    inner: I,
-}
-
 
 impl Cell {
     fn new(x: usize, y: usize) -> Self {
@@ -120,15 +113,16 @@ impl LifeBoard {
         let mut killed = Vec::new();
         let mut spawned = Vec::new();
 
+        for cell in &self.alive {
+            let neighbor_count = self.neighbors.get(cell).cloned().unwrap_or(0);
+            if neighbor_count < 2 || neighbor_count > 3 {
+                killed.push(cell.clone());
+            }
+        }
+
         for (cell, &neighbor_count) in &self.neighbors {
-            if self.alive.contains(cell) {
-                if neighbor_count < 2 || neighbor_count > 3 {
-                    killed.push(cell.clone());
-                }
-            } else {
-                if neighbor_count == 3 {
-                    spawned.push(cell.clone());
-                }
+            if neighbor_count == 3 && !self.alive.contains(cell) {
+                spawned.push(cell.clone());
             }
         }
 
@@ -145,22 +139,6 @@ impl LifeBoard {
     }
 }
 
-//impl<'a, I> Iterator for CellIterator<I>
-//    where I: Iterator<Item=(usize, &'a InternalCell)> {
-//    type Item = Cell;
-//
-//    fn next(&mut self) -> Option<Cell> {
-//        if let Some((i, _)) = self.inner.next() {
-//            Some(Cell {
-//                x: i % self.width,
-//                y: i / self.width,
-//            })
-//        } else {
-//            None
-//        }
-//    }
-//}
-
 
 #[cfg(test)]
 mod tests {
@@ -168,12 +146,25 @@ mod tests {
     use test::Bencher;
 
     #[test]
-    fn get_set() {
+    fn set_get() {
         let mut board = LifeBoard::new();
 
         board.set(1, 1, true);
 
         assert_eq!(board.get(1, 1), true);
+    }
+
+    #[test]
+    fn step_one_cell() {
+        let mut board = LifeBoard::new();
+
+        board.set(1, 1, true);
+
+        assert_eq!(board.get(1, 1), true);
+
+        board.step();
+
+        assert_eq!(board.get(1, 1), false);
     }
 
     #[test]
@@ -237,28 +228,14 @@ mod tests {
     }
 
     #[bench]
-    fn bench_10x10_blank_step_once(b: &mut Bencher) {
+    fn bench_empty_step_once(b: &mut Bencher) {
         let mut board = LifeBoard::new();
 
         b.iter(|| board.step());
     }
 
     #[bench]
-    fn bench_100x100_blank_step_once(b: &mut Bencher) {
-        let mut board = LifeBoard::new();
-
-        b.iter(|| board.step());
-    }
-
-    #[bench]
-    fn bench_1000x1000_blank_step_once(b: &mut Bencher) {
-        let mut board = LifeBoard::new();
-
-        b.iter(|| board.step());
-    }
-
-    #[bench]
-    fn bench_100x100_glider_step_100(b: &mut Bencher) {
+    fn bench_glider_step_100(b: &mut Bencher) {
         let mut board = LifeBoard::new();
         board.set(0, 0, true);
         board.set(1, 0, true);
@@ -274,7 +251,7 @@ mod tests {
     }
 
     #[bench]
-    fn bench_100x100_acorn_step_100(b: &mut Bencher) {
+    fn bench_acorn_step_100(b: &mut Bencher) {
         let mut board = LifeBoard::new();
         board.set(0, 0, true);
         board.set(1, 0, true);
@@ -292,11 +269,4 @@ mod tests {
     }
 
     // TODO: Glider gun benchmark?
-
-    //#[bench]
-    //fn bench_10000x10000_blank_step_once(b: &mut Bencher) {
-    //    let mut board = LifeBoard::new(10000, 10000);
-
-    //    b.iter(|| board.step());
-    //}
 }
