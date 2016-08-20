@@ -20,14 +20,14 @@ use sdl2::render::{
     Renderer,
 };
 
-mod grid;
+mod board;
 
 
 const SCREEN_WIDTH: u32 = 500;
 const SCREEN_HEIGHT: u32 = 500;
 
-const GRID_WIDTH: u64 = 50;
-const GRID_HEIGHT: u64 = 50;
+const BOARD_WIDTH: u64 = 50;
+const BOARD_HEIGHT: u64 = 50;
 
 const FPS: u32 = 60;
 
@@ -35,9 +35,9 @@ const BLACK: Color = Color::RGB(0, 0, 0);
 const WHITE: Color = Color::RGB(255, 255, 255);
 
 
-fn draw_board(renderer: &mut Renderer, board: &grid::LifeBoard) {
-    let cell_width = SCREEN_WIDTH / GRID_WIDTH as u32;
-    let cell_height = SCREEN_HEIGHT / GRID_HEIGHT as u32;
+fn draw_board(renderer: &mut Renderer, board: &board::LifeBoard) {
+    let cell_width = SCREEN_WIDTH / BOARD_WIDTH as u32;
+    let cell_height = SCREEN_HEIGHT / BOARD_HEIGHT as u32;
 
     renderer.set_draw_color(WHITE);
     for cell in board.iter_live_cells() {
@@ -53,7 +53,7 @@ fn draw_board(renderer: &mut Renderer, board: &grid::LifeBoard) {
 
 fn run(video: VideoSubsystem, mut timer: TimerSubsystem, mut event_pump: EventPump,
        step_time_ms: u32) {
-    let mut board = grid::LifeBoard::new();
+    let mut board = board::LifeBoard::new();
 
     let window = video.window(
         "rust-life",
@@ -69,8 +69,8 @@ fn run(video: VideoSubsystem, mut timer: TimerSubsystem, mut event_pump: EventPu
     let mut simulate = false;
     let mut last_step_time = timer.ticks();
 
-    let cell_width = SCREEN_WIDTH as u64 / GRID_WIDTH;
-    let cell_height = SCREEN_HEIGHT as u64 / GRID_HEIGHT;
+    let cell_width = SCREEN_WIDTH as u64 / BOARD_WIDTH;
+    let cell_height = SCREEN_HEIGHT as u64 / BOARD_HEIGHT;
 
     while running {
         let start_time = timer.ticks();
