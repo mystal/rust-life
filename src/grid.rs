@@ -5,8 +5,8 @@ use std::collections::{HashMap, HashSet};
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
 pub struct Cell {
-    pub x: usize,
-    pub y: usize,
+    pub x: i64,
+    pub y: i64,
 }
 
 pub struct LifeBoard {
@@ -16,7 +16,7 @@ pub struct LifeBoard {
 
 
 impl Cell {
-    fn new(x: usize, y: usize) -> Self {
+    fn new(x: i64, y: i64) -> Self {
         Cell {
             x: x,
             y: y,
@@ -33,15 +33,12 @@ impl LifeBoard {
     }
 
     // TODO: Return an iterator??
-    fn get_neighbors(&self, x: usize, y: usize) -> ([Cell; 8], usize) {
+    fn get_neighbors(&self, x: i64, y: i64) -> [Cell; 8] {
         let mut neighbors = [Cell::new(0, 0); 8];
         let mut next_neighbor = 0;
 
-        let x_start = if x == 0 { x } else { x - 1 };
-        let y_start = if y == 0 { y } else { y - 1 };
-
-        for j in y_start..(y + 2) {
-            for i in x_start..(x + 2) {
+        for j in (y - 1)..(y + 2) {
+            for i in (x - 1)..(x + 2) {
                 if x != i || y != j {
                     neighbors[next_neighbor] = Cell {
                         x: i,
@@ -51,14 +48,13 @@ impl LifeBoard {
                 }
             }
         }
-        (neighbors, next_neighbor)
+        neighbors
     }
 
-    fn update_neighbors(&mut self, x: usize, y: usize, value: bool) {
-        let (neighbors, count) = self.get_neighbors(x, y);
+    fn update_neighbors(&mut self, x: i64, y: i64, value: bool) {
+        let neighbors = self.get_neighbors(x, y);
         let amount: i8 = if value { 1 } else { -1 };
-        for i in 0..count {
-            let cell = neighbors[i];
+        for cell in &neighbors {
             let neighbor_count = self.neighbors.get(&cell).cloned().unwrap_or(0);
             let new_neighbor_count = (neighbor_count as i8 + amount) as u8;
 
@@ -70,20 +66,20 @@ impl LifeBoard {
         }
     }
 
-    //fn get_internal(&self, x: usize, y: usize) -> InternalCell {
+    //fn get_internal(&self, x: i64, y: i64) -> InternalCell {
     //    let index = (y * self.width) + x;
     //    self.inner[index]
     //}
 
-    pub fn get(&self, x: usize, y: usize) -> bool {
+    pub fn get(&self, x: i64, y: i64) -> bool {
         self.alive.contains(&Cell::new(x, y))
     }
 
-    pub fn get_neighbor_count(&self, x: usize, y: usize) -> u8 {
+    pub fn get_neighbor_count(&self, x: i64, y: i64) -> u8 {
         self.neighbors.get(&Cell::new(x, y)).cloned().unwrap_or(0)
     }
 
-    pub fn set(&mut self, x: usize, y: usize, value: bool) {
+    pub fn set(&mut self, x: i64, y: i64, value: bool) {
         // Get current value, if changing, update neighbors
         if value {
             if self.alive.insert(Cell::new(x, y)) {

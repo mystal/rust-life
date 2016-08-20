@@ -26,8 +26,8 @@ mod grid;
 const SCREEN_WIDTH: u32 = 500;
 const SCREEN_HEIGHT: u32 = 500;
 
-const GRID_WIDTH: usize = 50;
-const GRID_HEIGHT: usize = 50;
+const GRID_WIDTH: u64 = 50;
+const GRID_HEIGHT: u64 = 50;
 
 const FPS: u32 = 60;
 
@@ -42,8 +42,8 @@ fn draw_board(renderer: &mut Renderer, board: &grid::LifeBoard) {
     renderer.set_draw_color(WHITE);
     for cell in board.iter_live_cells() {
         let cell_rect = Rect::new(
-            (cell.x * cell_width as usize) as i32,
-            (cell.y * cell_height as usize) as i32,
+            (cell.x * cell_width as i64) as i32,
+            (cell.y * cell_height as i64) as i32,
             cell_width,
             cell_height,
         );
@@ -69,8 +69,8 @@ fn run(video: VideoSubsystem, mut timer: TimerSubsystem, mut event_pump: EventPu
     let mut simulate = false;
     let mut last_step_time = timer.ticks();
 
-    let cell_width = SCREEN_WIDTH as usize / GRID_WIDTH;
-    let cell_height = SCREEN_HEIGHT as usize / GRID_HEIGHT;
+    let cell_width = SCREEN_WIDTH as u64 / GRID_WIDTH;
+    let cell_height = SCREEN_HEIGHT as u64 / GRID_HEIGHT;
 
     while running {
         let start_time = timer.ticks();
@@ -92,14 +92,14 @@ fn run(video: VideoSubsystem, mut timer: TimerSubsystem, mut event_pump: EventPu
                     }
                 },
                 Event::MouseButtonDown {mouse_btn: Mouse::Left, x, y, ..} => {
-                    board.set(x as usize / cell_width,
-                                   y as usize / cell_height,
-                                   true);
+                    board.set((x as u64 / cell_width) as i64,
+                              (y as u64 / cell_height) as i64,
+                              true);
                 },
                 Event::MouseButtonDown {mouse_btn: Mouse::Right, x, y, ..} => {
-                    board.set(x as usize / cell_width,
-                                   y as usize / cell_height,
-                                   false);
+                    board.set((x as u64 / cell_width) as i64,
+                              (y as u64 / cell_height) as i64,
+                              false);
                 },
                 Event::Quit {..} => running = false,
                 _ => {},
