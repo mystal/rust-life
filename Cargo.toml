@@ -6,3 +6,6 @@ authors = ["Gabriel Martinez <gabe@refractedpixels.com>"]
 [dependencies]
 rand = "^0.3.14"
 sdl2 = "^0.22.0"
+
+[profile.bench]
+debug = true
