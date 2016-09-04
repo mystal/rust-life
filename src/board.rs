@@ -32,7 +32,6 @@ impl LifeBoard {
         }
     }
 
-    // TODO: Return an iterator??
     fn get_neighbors(&self, x: i64, y: i64) -> [Cell; 8] {
         let mut neighbors = [Cell::new(0, 0); 8];
         let mut next_neighbor = 0;
@@ -161,6 +160,24 @@ mod tests {
         board.step();
 
         assert_eq!(board.get(1, 1), false);
+    }
+
+    #[test]
+    fn get_neighbors_0_0() {
+        let board = LifeBoard::new();
+
+        let neighbors = board.get_neighbors(0, 0);
+
+        assert!(neighbors.contains(&Cell::new(-1, -1)));
+        assert!(neighbors.contains(&Cell::new(-1, 0)));
+        assert!(neighbors.contains(&Cell::new(-1, 1)));
+        assert!(neighbors.contains(&Cell::new(0, -1)));
+        assert!(neighbors.contains(&Cell::new(0, 1)));
+        assert!(neighbors.contains(&Cell::new(1, -1)));
+        assert!(neighbors.contains(&Cell::new(1, 0)));
+        assert!(neighbors.contains(&Cell::new(1, 1)));
+
+        assert!(!neighbors.contains(&Cell::new(0, 0)));
     }
 
     #[test]
